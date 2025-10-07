@@ -29,18 +29,19 @@ def visualize(cfg):
 
     cfg['eval'] = True
 
-    model_class = build_model(cfg).__class__
-    model = model_class.load_from_checkpoint(cfg.ckpt_path, config=cfg)
-    model = model.cuda()
     train_set = build_dataset(cfg)
     train_batch_size = max(cfg.method['train_batch_size'] // len(cfg.devices), 1)
     train_loader = DataLoader(
         train_set, batch_size=train_batch_size, num_workers=cfg.load_num_workers, drop_last=False,
         collate_fn=train_set.collate_fn)
 
-    wandb.init(project="unitraj", name=cfg.exp_name)
     predict = True
     
+    if predict:
+        #wandb.init(project="unitraj", name=cfg.exp_name)
+        model_class = build_model(cfg).__class__
+        model = model_class.load_from_checkpoint(cfg.ckpt_path, config=cfg)
+        model = model.cuda()
 
     for batch in train_loader:
         input = batch['input_dict']
@@ -56,6 +57,7 @@ def visualize(cfg):
                 visualize_scenario(input_cpu, idx_in_batch, timestep=cfg.get('past_len'), show_history=True, show_future=True, show_map=True, 
                                    prediction=batch_pred['predicted_trajectory'].cpu(), predicition_probs=batch_pred['predicted_probability'].cpu(), 
                                    show_roadlines=SHOW_ROADLINES, show_ped_xings=SHOW_PED_XINGS)
+                #plt.savefig("{}.png".format(str(input['scenario_id'][idx_in_batch]) )); plt.close()
             else:
                 visualize_scenario(input_cpu, idx_in_batch, timestep=cfg.get('past_len'), show_history=True, show_future=True, show_map=True, 
                                    show_roadlines=SHOW_ROADLINES, show_ped_xings=SHOW_PED_XINGS)
