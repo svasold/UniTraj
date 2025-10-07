@@ -77,11 +77,10 @@ def visualize_scenario(
     # Plot static map elements and actor tracks
     if show_map: _plot_static_map_elements(input, batch_idx, show_ped_xings, show_roadlines)
     cur_plot_bounds = _plot_actor_tracks(ax, input, batch_idx, timestep, show_history, show_future, show_map)
-    print(cur_plot_bounds)
     plot_bounds = cur_plot_bounds
-    cur_prediction = np.array(prediction[batch_idx])
-    best_pred = np.argmax(np.array(predicition_probs[batch_idx]))
+    cur_prediction = None if type(prediction) is type(None) else np.array(prediction[batch_idx])
     if cur_prediction is not None:
+        best_pred = np.argmax(np.array(predicition_probs[batch_idx]))
         if best_pred < 0:
             _scatter_polylines(
                 cur_prediction[ :, :],
@@ -353,7 +352,7 @@ def _plot_polylines(
                 continue
             else:
                 clean_polyline.append(point)
-        polyline = np.array(clean_polyline)
+        polyline = np.stack(clean_polyline, axis=0)
         if polyline.shape[0] == 0:
             zero_point = True
             continue
