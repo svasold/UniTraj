@@ -2,7 +2,7 @@ import os
 import pickle
 import shutil
 from collections import defaultdict
-from multiprocessing import Pool
+import torch.multiprocessing as mp
 import h5py
 import numpy as np
 import torch
@@ -37,6 +37,7 @@ class BaseDataset(Dataset):
         self.load_data()
 
     def load_data(self):
+        mp.set_start_method("spawn", force=True)
         self.data_loaded = {}
         if self.is_validation:
             print('Loading validation data...')
@@ -56,7 +57,6 @@ class BaseDataset(Dataset):
                     print('Warning: cache path {} already exists, skip '.format(self.cache_path))
                     file_list = self.get_data_list(data_usage_this_dataset)
                 else:
-
                     _, summary_list, mapping = read_dataset_summary(data_path)
 
                     if os.path.exists(self.cache_path):
@@ -75,7 +75,7 @@ class BaseDataset(Dataset):
                             pickle.dump(data_splits[i], f)
 
                     # results = self.process_data_chunk(0)
-                    with Pool(processes=process_num) as pool:
+                    with mp.Pool(processes=process_num) as pool:
                         results = pool.map(self.process_data_chunk, list(range(process_num)))
 
                     # concatenate the results
@@ -524,7 +524,7 @@ class BaseDataset(Dataset):
         if os.path.exists(file_list_path):
             data_loaded = pickle.load(open(file_list_path, 'rb'))
         else:
-            raise ValueError('Error: file_list.pkl not found')
+            raise ValueError(f'Error: file_list.pkl not found {file_list_path}')
 
         data_list = list(data_loaded.items())
         np.random.shuffle(data_list)
@@ -663,7 +663,7 @@ class BaseDataset(Dataset):
                 print(f'Warning: obj_idx={obj_idx} is not valid at time step {current_time_index}, scene_id={scene_id}')
                 continue
             if obj_types[obj_idx] not in selected_type:
-                print(f'Warning: object type in data is not a selected type for scene_id={scene_id}')
+                print(f'Warning: object type ({obj_types[obj_idx]}) in data is not a selected type ({selected_type}) for scene_id={scene_id}')
                 continue
 
             center_objects_list.append(obj_trajs_full[obj_idx, current_time_index])
