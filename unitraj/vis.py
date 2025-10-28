@@ -80,7 +80,7 @@ def visualize_scenario(
     plot_bounds = cur_plot_bounds
     cur_prediction = None if type(prediction) is type(None) else np.array(prediction[batch_idx])
     if cur_prediction is not None:
-        best_pred = np.argmax(np.array(predicition_probs[batch_idx]))
+        best_pred = np.argmin(np.abs(np.linalg.norm(cur_prediction[:, -1, :2] - np.array(input['center_gt_trajs'][batch_idx][-1, :2]), axis=1)))
         if best_pred < 0:
             _scatter_polylines(
                 cur_prediction[ :, :],
