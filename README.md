@@ -22,6 +22,10 @@ and [WandB](https://wandb.ai/site), the framework is easy to configure, train an
 
 ## 📰 News & Updates
 
+### Sep. 2025
+
+- 🔥 UniTraj now supports two additional models [Forecast-MAE](https://github.com/jchengai/forecast-mae/tree/main) and [Efficient Motion Prediction (EMP)](https://github.com/a-pru/emp)!
+
 ### May. 2025
 
 - 🔥 UniTraj now supports sim agents! See more details there: [SMART](https://github.com/vita-epfl/UniTraj/tree/main/unitraj/models/smart)
@@ -79,15 +83,22 @@ unitraj
 │   │   ├── autobot.yaml
 │   │   ├── MTR.yaml
 │   │   ├── wayformer.yaml
+│   │   ├── MAE.yaml
+│   │   ├── forecast.yaml
+│   │   ├── EMP.yaml
 ├── datasets
 │   ├── base_dataset.py
 │   ├── autobot_dataset.py
 │   ├── wayformer_dataset.py
 │   ├── MTR_dataset.py
+│   ├── fmae_dataset.py
+│   ├── EMP_dataset.py
 ├── models
 │   ├── autobot
 │   ├── mtr
 │   ├── wayformer
+│   ├── fmae
+│   ├── emp
 │   ├── base_model
 ├── utils
 ```
